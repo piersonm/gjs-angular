@@ -1,0 +1,15 @@
+{
+    "extends": "./node_modules/grapesjs-cli/dist/template/tsconfig.json",
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "ESNext",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "outDir": "./dist",
+        "moduleResolution": "node",
+        "resolveJsonModule": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+}
