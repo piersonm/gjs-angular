@@ -53,6 +53,8 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
           editor.setComponents(codeViewer.getContent().trim());
           editor.Modal.close();
         };
+        btnImp.style.marginBottom = '10px';
+        btnImp.style.marginRight = '10px';
         container.appendChild(btnImp);
 
         // Import HTML and CSS files button
@@ -60,6 +62,8 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
         btnImportFiles.type = 'button';
         btnImportFiles.innerHTML = 'Import HTML & CSS Files';
         btnImportFiles.className = `${pfx}btn-prim ${pfx}btn-import-files`;
+        btnImportFiles.style.marginBottom = '10px';
+        btnImportFiles.style.marginRight = '10px'; // Add spacing
         btnImportFiles.onclick = async () => {
           const [htmlFile, cssFile] = await this.importFiles();
           if (htmlFile) {
@@ -79,6 +83,8 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
         btnImportFolder.type = 'button';
         btnImportFolder.innerHTML = 'Import Folder';
         btnImportFolder.className = `${pfx}btn-prim ${pfx}btn-import-folder`;
+        btnImportFolder.style.marginBottom = '10px';
+        btnImportFolder.style.marginRight = '10px'; // Add spacing
         btnImportFolder.onclick = async () => {
           const files = await this.importFolder();
           const htmlFile = files.find((file) => file.name.endsWith('.html'));
