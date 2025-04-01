@@ -1,6 +1,7 @@
 import type { Editor } from 'grapesjs';
 import { RequiredPluginOptions } from '..';
 import { cmdImport } from './../consts';
+import { json } from 'body-parser';
 
 export default (editor: Editor, config: RequiredPluginOptions) => {
   const pfx = editor.getConfig('stylePrefix');
@@ -102,6 +103,31 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
         };
         container.appendChild(btnImportFolder);
 
+        // Import JSON file button
+        const btnImportJson = document.createElement('button');
+        btnImportJson.type = 'button';
+        btnImportJson.innerHTML = 'Import JSON File';
+        btnImportJson.className = `${pfx}btn-prim ${pfx}btn-import-json`;
+        btnImportJson.style.marginBottom = '10px'; // Add spacing
+        btnImportJson.style.marginRight = '10px'; // Add spacing
+        btnImportJson.onclick = async () => {
+          const jsonFile = await this.importJsonFile();
+          if (jsonFile) {
+            const jsonContent = await jsonFile.text();
+            try {
+              const parsedContent = JSON.parse(jsonContent);
+              console.log('Parsed JSON content:', parsedContent);
+
+              // Call the function to update the editor content
+              updateEditorContentById(editor, sampleData.map(data => ({ id: data.componentId, content: data.content })));
+            } catch (error) {
+              console.error('Invalid JSON file:', error);
+            }
+          }
+          editor.Modal.close();
+        };
+        container.appendChild(btnImportJson);
+
         this.container = container;
       }
 
@@ -161,5 +187,77 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
         input.click();
       });
     },
+
+    /**
+     * Handle importing a JSON file
+     * @returns {Promise<File | null>}
+     */
+    async importJsonFile(): Promise<File | null> {
+      return new Promise((resolve) => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = () => {
+          const files = Array.from(input.files || []);
+          resolve(files[0] || null);
+        };
+        input.click();
+      });
+    },
   });
+
+  //sample data
+
+  const sampleDataObj = {
+    id: String,
+    content: String,
+
+  };
+
+  const sampleData = [
+    {
+      componentId: 'Title',
+      attributeID: 'textLocation',
+      content: 'Welcome to a Test',
+    },
+    {
+      componentId: 'descrip',
+      attributeID: 'textLocation',
+      content: 'Testing content',
+    },
+  ];
+
+  /**
+   * Updates the text of a tag in the editor that matches the given id.
+   * @param editor - The GrapesJS editor instance.
+   * @param sampleData - Array of objects containing id and content to update.
+   */
+  function updateEditorContentById(editor: Editor, sampleData: { id: string; content: string }[]) {
+    sampleData.forEach((data) => {
+      // Find the component in the editor by id
+      const wrapper = editor.getWrapper();
+      const components = wrapper ? wrapper.find(`[id="${data.id}"]`) : [];
+
+      if (components.length > 0) {
+        components.forEach((component) => {
+          // Update only the text content of the matching component
+          const currentContent = component.get('content');
+          if (component.is('textnode')) {
+            // If the content is plain text, replace it
+            component.set('content', data.content);
+          } else {
+            // If the content is structured (e.g., HTML), update the inner text
+            const el = component.getEl();
+            if (el) {
+              el.textContent = data.content;
+            }
+          }
+          console.log(`Updated content for component with id ${data.id}:`, data.content);
+        });
+      } else {
+        console.log(`No component found with id: ${data.id}`);
+      }
+    });
+  }
+
 };
