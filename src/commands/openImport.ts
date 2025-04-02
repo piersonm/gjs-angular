@@ -131,6 +131,20 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
                 console.log(axdContent);
                 break;
               }
+              case 'png':
+              case 'jpg':
+              case 'jpeg':
+              case 'gif':
+              case 'svg': {
+                const imageUrl = URL.createObjectURL(file); // Create a Blob URL for the image
+                editor.addComponents({
+                  type: 'image',
+                  src: imageUrl,
+                  alt: file.name,
+                }); // Add the image as a component in the editor
+                console.log(`Imported Image file: ${file.name}`);
+                break;
+              }
               default: {
                 // Handle unsupported or unknown file types
                 const fileContent = await file.text();
