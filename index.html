@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/grapesjs"></script>
     <script src="https://unpkg.com/grapesjs-plugin-export"></script>
     <script src="https://unpkg.com/grapesjs-blocks-basic"></script>
+    <script src="path/to/grapesjs-parser-postcss.min.js"></script>
 
     <style>
       body,
@@ -17,7 +18,7 @@
     </style>
   </head>
   <body>
-    <div id="gjs" style="height:100vh; overflow:hidden">
+    <div id="gjs" style="height:100dvh; overflow:hidden">
       <div class="panel">
         <h1 class="welcome">Welcome to</h1>
         <div class="big-title">
@@ -90,7 +91,7 @@
           container: '#gjs',
           fromElement: true,
 
-          plugins: ['grapesjs-plugin-export', 'gjs-blocks-basic', 'grapesjs-preset-webpage'],
+          plugins: ['grapesjs-plugin-export', 'gjs-blocks-basic', 'grapesjs-preset-webpage', 'grapesjs-parser-postcss'],
         });
       };
     </script>
