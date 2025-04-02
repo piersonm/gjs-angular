@@ -83,7 +83,7 @@ const plugin: Plugin<PluginOptions> = (editor, opts = {}) => {
         <html lang="en">
           <head>
             <meta charset="utf-8">
-            <link rel="stylesheet" href="./css/style.css">
+            
           </head>
           <body>${editor.getHtml()}</body>
         </html>`,

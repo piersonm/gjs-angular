@@ -125,6 +125,7 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
             }
           }
           editor.Modal.close();
+          console.log('Updated HTML:', editor.getHtml());
         };
         container.appendChild(btnImportJson);
 
@@ -206,14 +207,6 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
     },
   });
 
-  //sample data
-
-  const sampleDataObj = {
-    id: String,
-    content: String,
-
-  };
-
   const sampleData = [
     {
       componentId: 'Title',
@@ -226,9 +219,9 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
       content: 'Testing content',
     },
   ];
-
+  
   /**
-   * Updates the text of a tag in the editor that matches the given id.
+   * Updates the text of a tag in the editor that matches the given id and ensures changes are reflected in editor.getHtml().
    * @param editor - The GrapesJS editor instance.
    * @param sampleData - Array of objects containing id and content to update.
    */
@@ -240,18 +233,33 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
 
       if (components.length > 0) {
         components.forEach((component) => {
-          // Update only the text content of the matching component
-          const currentContent = component.get('content');
+          // Update the content of the matching component
           if (component.is('textnode')) {
-            // If the content is plain text, replace it
-            component.set('content', data.content);
+            component.set('content', data.content); // Update text content for text nodes
           } else {
-            // If the content is structured (e.g., HTML), update the inner text
             const el = component.getEl();
             if (el) {
-              el.textContent = data.content;
+              editor.select(component); // Select the component
+              const targetedComponent = editor.getSelected(); // Get the selected component
+              if (targetedComponent) {
+                const targetedEl = targetedComponent.getEl(); // Get the DOM element of the selected component
+                if (targetedEl) {
+                  targetedEl.innerText = data.content; // Update the innerText of the DOM element
+                  console.log(`Updated innerText for component with id ${data.id}:`, targetedEl.innerText);
+
+                  // Map the innerText to the editor's internal state
+                  const updatedInnerHTML = targetedEl.innerHTML; // Get the updated innerHTML
+                  console.log(`Updated targetedComponent content:`, updatedInnerHTML);
+
+                  // Set targetedComponent.toHTML() to targetedComponent.__innerHTML
+                  targetedComponent.__innerHTML = () => updatedInnerHTML; // Update the internal __innerHTML
+                  console.log(`Updated targetedComponent.__innerHTML:`, targetedComponent.__innerHTML);
+                }
+              }
             }
           }
+
+          // Trigger a change event to ensure the editor reflects the updates
           console.log(`Updated content for component with id ${data.id}:`, data.content);
         });
       } else {
@@ -259,5 +267,4 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
       }
     });
   }
-
 };

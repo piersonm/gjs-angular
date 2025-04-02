@@ -85,8 +85,8 @@ export default (editor: Editor, opts: RequiredPluginOptions) => {
         id: exptToZip,
         command: () => editor.runCommand(exptToZip),
         label: `<svg ${iconStyle} viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11.5,7H12.5V11H11.5V7M11.5,13H12.5V17H11.5V13Z" />
-        </svg>`
+            <path fill="currentColor" d="M17,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H7C5.9,3 5,3.9 5,5V19C5,20.1 5.9,21 7,21H17C18.1,21 19,20.1 19,19V5C19,3.9 18.1,3 17,3M12,3C12.55,3 13,3.45 13,4C13,4.55 12.55,5 12,5C11.45,5 11,4.55 11,4C11,3.45 11.45,3 12,3M17,19H7V5H9V7H15V5H17V19Z" />
+        </svg>`,
       },
       {
         id: 'getJson',
@@ -105,9 +105,7 @@ export default (editor: Editor, opts: RequiredPluginOptions) => {
           // Clean up the URL object
           URL.revokeObjectURL(link.href);
         },
-        label: `<svg ${iconStyle} viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11.5,7H12.5V11H11.5V7M11.5,13H12.5V17H11.5V13Z" />
-        </svg>`
+        label: `{ }`
       },
       {
         id: 'undo',
@@ -133,7 +131,8 @@ export default (editor: Editor, opts: RequiredPluginOptions) => {
         label: `<svg ${iconStyle} viewBox="0 0 24 24">
               <path fill="currentColor" d="M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z" />
           </svg>`,
-      }],
+      },
+    ],
   },{
     id: 'views',
     buttons  : [{
