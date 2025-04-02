@@ -88,17 +88,59 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
         btnImportFolder.style.marginRight = '10px'; // Add spacing
         btnImportFolder.onclick = async () => {
           const files = await this.importFolder();
-          const htmlFile = files.find((file) => file.name.endsWith('.html'));
-          const cssFile = files.find((file) => file.name.endsWith('.css'));
 
-          if (htmlFile) {
-            const htmlContent = await htmlFile.text();
-            editor.setComponents(htmlContent.trim());
-          }
-          if (cssFile) {
-            const cssContent = await cssFile.text();
-            editor.Css.addRules(cssContent.trim());
-          }
+          // Process each file based on its type
+          files.forEach(async (file) => {
+            const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+            switch (fileExtension) {
+              case 'html': {
+                const htmlContent = await file.text();
+                editor.setComponents(htmlContent.trim()); // Set HTML content in the editor
+                console.log(`Imported HTML file: ${file.name}`);
+                break;
+              }
+              case 'css': {
+                const cssContent = await file.text();
+                editor.Css.addRules(cssContent.trim()); // Add CSS rules to the editor
+                console.log(`Imported CSS file: ${file.name}`);
+                break;
+              }
+              case 'js': {
+                const jsContent = await file.text();
+                // Handle JavaScript file (e.g., store it, execute it, or log it)
+                console.log(`Imported JavaScript file: ${file.name}`);
+                console.log(jsContent);
+                break;
+              }
+              case 'json': {
+                const jsonContent = await file.text();
+                try {
+                  const parsedJson = JSON.parse(jsonContent);
+                  console.log(`Imported JSON file: ${file.name}`, parsedJson);
+                  // Handle JSON data (e.g., update editor components or settings)
+                } catch (error) {
+                  console.error(`Failed to parse JSON file: ${file.name}`, error);
+                }
+                break;
+              }
+              case 'axd': {
+                const axdContent = await file.text();
+                // Handle .axd file (e.g., log it or process it)
+                console.log(`Imported AXD file: ${file.name}`);
+                console.log(axdContent);
+                break;
+              }
+              default: {
+                // Handle unsupported or unknown file types
+                const fileContent = await file.text();
+                console.warn(`Unsupported file type: ${file.name}`);
+                console.log(`File content:`, fileContent);
+                break;
+              }
+            }
+          });
+
           editor.Modal.close();
         };
         container.appendChild(btnImportFolder);
