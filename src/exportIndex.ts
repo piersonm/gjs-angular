@@ -1,6 +1,7 @@
 import FileSaver from 'file-saver';
 import type { Editor, Plugin } from 'grapesjs';
 import JSZip from 'jszip';
+import { importedFiles } from './commands/openImport';
 
 export type RootType = Record<string, unknown>;
 
@@ -134,6 +135,23 @@ const plugin: Plugin<PluginOptions> = (editor, opts = {}) => {
     async createDirectory(zip: JSZip, root: PluginOptions["root"]) {
       root = typeof root === 'function' ? await root(editor) : root;
 
+      // Add imported files to the ZIP
+      for (const file of importedFiles) {
+        const opts: JSZip.JSZipFileOptions = {};
+        const isBinary = file.content instanceof Blob;
+
+        if (isBinary) {
+          opts.binary = true;
+          if (file.content instanceof Blob) {
+            const arrayBuffer = await file.content.arrayBuffer();
+            zip.file(file.name, arrayBuffer, opts);
+          } else {
+            zip.file(file.name, file.content as string, opts);
+          }
+        }
+      }
+
+      // Add other files from the root object
       for (const name in root) {
         if (root.hasOwnProperty(name)) {
           let content = root[name];

@@ -2,7 +2,7 @@ import type { Editor } from 'grapesjs';
 import { RequiredPluginOptions } from '..';
 import { cmdImport } from './../consts';
 import { json } from 'body-parser';
-
+export const importedFiles: { name: string; content: string | Blob }[] = [];
 export default (editor: Editor, config: RequiredPluginOptions) => {
   const pfx = editor.getConfig('stylePrefix');
   const importLabel = config.modalImportLabel;
@@ -109,6 +109,7 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
               case 'js': {
                 const jsContent = await file.text();
                 // Handle JavaScript file (e.g., store it, execute it, or log it)
+                importedFiles.push({ name: file.name, content: file });
                 console.log(`Imported JavaScript file: ${file.name}`);
                 console.log(jsContent);
                 break;
@@ -117,6 +118,7 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
                 const jsonContent = await file.text();
                 try {
                   const parsedJson = JSON.parse(jsonContent);
+                  importedFiles.push({ name: file.name, content: file });
                   console.log(`Imported JSON file: ${file.name}`, parsedJson);
                   // Handle JSON data (e.g., update editor components or settings)
                 } catch (error) {
@@ -127,6 +129,7 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
               case 'axd': {
                 const axdContent = await file.text();
                 // Handle .axd file (e.g., log it or process it)
+                importedFiles.push({ name: file.name, content: file });
                 console.log(`Imported AXD file: ${file.name}`);
                 console.log(axdContent);
                 break;
@@ -136,13 +139,24 @@ export default (editor: Editor, config: RequiredPluginOptions) => {
               case 'jpeg':
               case 'gif':
               case 'svg': {
-                const imageUrl = URL.createObjectURL(file); // Create a Blob URL for the image
-                editor.addComponents({
-                  type: 'image',
-                  src: imageUrl,
-                  alt: file.name,
-                }); // Add the image as a component in the editor
-                console.log(`Imported Image file: ${file.name}`);
+                try {
+                  const uniqueFileName = `${Date.now()}-${file.name}`;
+                  const imageUrl = URL.createObjectURL(file);
+              
+                  // Track the imported file
+                  importedFiles.push({ name: `images/${uniqueFileName}`, content: file });
+              
+                  // Add the image to the editor
+                  editor.addComponents({
+                    type: 'image',
+                    src: imageUrl,
+                    alt: file.name,
+                  });
+              
+                  console.log(`Imported Image file: ${file.name}`);
+                } catch (error) {
+                  console.error(`Failed to import image file: ${file.name}`, error);
+                }
                 break;
               }
               default: {
